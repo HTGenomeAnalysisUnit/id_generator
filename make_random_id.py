@@ -35,6 +35,15 @@ def get_id(pattern):
             id_toks.append(x)
     return "".join(id_toks)
 
+# Generate N random ids given pattern
+def generate_ids(n, pattern):
+    rnd_ids = []
+    while len(rnd_ids) < n:
+        rnd_id = get_id(pattern)
+        if rnd_id not in rnd_ids:
+            rnd_ids.append(rnd_id)
+    return rnd_ids
+
 # Parse pattern string into list of elements
 def parse_pattern(pattern_string):
     elements = []
@@ -103,6 +112,8 @@ outf = open(outfile, "w")
 print("Generating random ids...")
 # Input is a file
 if inputfile:
+    is_header = args.no_head
+
     # Check if input file exists, raise error otherwise
     try:
         f = open(inputfile)
@@ -111,8 +122,17 @@ if inputfile:
         print(f"Error: {inputfile} does not exist")
         sys.exit(1)
 
-    # Read input file and generate random ids
-    is_header = args.no_head
+    # Count number of lines in input file
+    with open(inputfile) as f:
+        n_lines = sum(1 for line in f)
+        if is_header:
+            n_lines -= 1
+
+    # Make a list of random ids
+    rnd_ids = generate_ids(n_lines, pattern)
+
+    # Read input file and add random ids
+    i = 0
     with open(inputfile) as f:
         for line in f:
             line = line.rstrip("\n")
@@ -120,18 +140,21 @@ if inputfile:
                 outf.write(f"{line}\trandom_id\n")
                 is_header = False
             else:
-                rnd_id = get_id(pattern)
-                outf.write(f"{line}\t{rnd_id}\n")
+                outf.write(f"{line}\t{rnd_ids[i]}\n")
+                i += 1
 else:
 # Input is a number of ids to generate
     if n_ids < 1:
-        print(f"Error: number of random ids {n_ids} is not correct")
+        print(f"Error: number of requested ids {n_ids} is not correct")
         sys.exit(1)
+    
+    # Make a list of random ids
+    rnd_ids = generate_ids(n_ids, pattern)
+    
     if args.no_head:
         outf.write("random_id\n")
-    for i in range(n_ids):
-        rnd_id = get_id(pattern)
-        outf.write(f"{rnd_id}\n")
+    for id in rnd_ids:
+        outf.write(f"{id}\n")
 
 outf.close()
 
