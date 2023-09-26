@@ -5,8 +5,8 @@ This is a simple random ID generator. It generates random IDs given a specificed
 ## Usage
 
 ```bash
-usage: make_random_id.py [-h] [-i INPUT | -n NUMBER] -o OUTPUT -p PATTERN
-                         [--no_head]
+usage: make_random_id.py [-h] [-i INPUT | -n NUMBER] [-x EXCLUDE_LIST] -o
+                         OUTPUT -p PATTERN [--no_head]
 
 Make random id
 
@@ -16,6 +16,9 @@ optional arguments:
                         Input file. One random id will be generated per line
   -n NUMBER, --number NUMBER
                         Number of random id to create
+  -x EXCLUDE_LIST, --exclude_list EXCLUDE_LIST
+                        A file containing a list of IDs to exclude, i.e.
+                        previous IDs to avoid duplication
   -o OUTPUT, --output OUTPUT
                         Output file
   -p PATTERN, --pattern PATTERN
@@ -54,3 +57,9 @@ The following tags are allowed:
 | `@3xLLOW@-@2xD@` | `abc-12` |
 | `FIX_@2xLUP@@3xD@` | `FIX_AB123` |
 | `FIX-@2xD@-@3xLUP@` | `FIX-12-DEF` |
+
+## Exclude list
+
+You can specify a list of IDs to exclude from the random generation usin `--exclude_list`. This accepts a text file with one ID per line.
+
+This is useful if you want to generate new IDs for an existing project, but you want to avoid generating IDs that already exist.

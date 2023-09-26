@@ -36,8 +36,8 @@ def get_id(pattern):
     return "".join(id_toks)
 
 # Generate N random ids given pattern
-def generate_ids(n, pattern):
-    rnd_ids = []
+def generate_ids(n, pattern, exclude_list=[]):
+    rnd_ids = exclude_list
     while len(rnd_ids) < n:
         rnd_id = get_id(pattern)
         if rnd_id not in rnd_ids:
@@ -85,6 +85,7 @@ inputs = parser.add_mutually_exclusive_group()
 inputs.add_argument('-i', '--input', help='Input file. One random id will be generated per line')
 inputs.add_argument('-n', '--number', help='Number of random id to create', type=int)
 
+parser.add_argument('-x', '--exclude_list', help='A file containing a list of IDs to exclude, i.e. previous IDs to avoid duplication', required=False)
 parser.add_argument('-o', '--output', help='Output file', required=True)
 parser.add_argument('-p', '--pattern', help='Pattern, like "AA_@3xLU@-@2xD@"', required=True)
 parser.add_argument('--no_head', action="store_false", help='Input file has no header and no header in output')
@@ -94,6 +95,17 @@ inputfile=args.input
 outfile=args.output
 pattern=args.pattern
 n_ids=args.number
+exclude_list=[]
+
+if args.exclude_list:
+    try:
+        f = open(args.exclude_list)
+        f.close()
+    except IOError:
+        print(f"Error: {args.exclude_list} does not exist")
+        sys.exit(1)
+    with open(args.exclude_list) as f:
+        exclude_list = [line.rstrip() for line in f]
 
 # Initial logging
 print("=== ARGUMENTS ===")
@@ -101,6 +113,7 @@ print("Input file is ", inputfile)
 print("Output file is ", outfile)
 print("Pattern is ", pattern)
 print("Number of ids to generate is ", n_ids)
+if len(exclude_list) > 0: print(f"Exclude list contains {len(exclude_list)} elements")
 print("=================")
 
 # Parse pattern and check if it is correct
@@ -129,7 +142,7 @@ if inputfile:
             n_lines -= 1
 
     # Make a list of random ids
-    rnd_ids = generate_ids(n_lines, pattern)
+    rnd_ids = generate_ids(n_lines, pattern, exclude_list)
 
     # Read input file and add random ids
     i = 0
@@ -149,7 +162,7 @@ else:
         sys.exit(1)
     
     # Make a list of random ids
-    rnd_ids = generate_ids(n_ids, pattern)
+    rnd_ids = generate_ids(n_ids, pattern, exclude_list)
     
     if args.no_head:
         outf.write("random_id\n")
