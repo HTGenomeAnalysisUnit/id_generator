@@ -47,6 +47,7 @@ The following tags are allowed:
 | LUP | Uppercase letters |
 | LLOW | Lowercase letters |
 | L | Letters (mixed upper and lowercase) |
+| D | Digits |
 | LD | Uppercase letters + digits |
 
 ### Examples
