@@ -37,12 +37,14 @@ def get_id(pattern):
 
 # Generate N random ids given pattern
 def generate_ids(n, pattern, exclude_list=[]):
-    rnd_ids = exclude_list
-    while len(rnd_ids) < n:
+    observed_ids = exclude_list
+    new_ids = []
+    while len(new_ids) < n:
         rnd_id = get_id(pattern)
-        if rnd_id not in rnd_ids:
-            rnd_ids.append(rnd_id)
-    return rnd_ids
+        if rnd_id in observed_ids: continue
+        new_ids.append(rnd_id)
+        observed_ids.append(rnd_id)
+    return new_ids
 
 # Parse pattern string into list of elements
 def parse_pattern(pattern_string):
